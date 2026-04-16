@@ -1,0 +1,53 @@
+# NL2SQL Agent 開發對話完整匯出紀錄 (V1)
+
+這份文件紀錄了本次對話中針對 **NL2SQL Agent** 專案所進行的所有重大優化、功能開發與 Bug 修復。
+
+---
+
+## 1. 專案核心變更摘要
+
+### 多模型供應商支援 (Multi-LLM Support)
+- **統一介面**：將原有的 `dashscope` 專有格式重構為通用的 `langchain-openai` 格式。
+- **動態管理**：實作了 `/api/settings/llm` API，支援透過 `data/llm_settings.json` 動態配置 8 大模型供應商（OpenAI, DeepSeek, Google, SiliconFlow 等）。
+- **前端整合**：新增 `SettingsModal.tsx`，允許使用者即時切換模型與金鑰。
+
+### 繁體中文化 (Traditional Chinese Localization)
+- **前端介面**：將 Sidebar、ChatArea、ChartPanel、SettingsModal 等所有組件的簡體中文靜態字串全數轉為繁體中文。
+- **AI 邏輯**：更新 `SQL_AGENT_SYSTEM_PROMPT`，強制 AI 必須始終以「繁體中文（zh-TW）」進行回答。
+- **預設數據**：轉換了資料庫初始化時的範例數據標籤與預設對話名稱（「新對話」）。
+
+### 佈局與捲軸修復 (Scroll & Layout Fixes)
+- **捲軸問題**：解決了長對話時訊息列表無法垂直捲動的問題。透過正確配置 Flex 容器的 `min-h-0` 與 `overflow-hidden` 屬性，確保聊天區塊在內部產生捲軸。
+- **可調整面板**：右側數據視覺化面板現在支援滑鼠拖曳縮放（面板寬度自訂）。
+
+### 圖表渲染修復 (Chart Rendering)
+- **穩定性**：重構 `Chart.tsx`，加入 `parseValue` 函式處理千分位逗號字串，避免圖表數據產生 `NaN`。
+- **動態更新**：使用 React `key` 機制確保切換圖表類型時完全重新掛載畫布，解決 ECharts 殘留舊實例的問題。
+
+---
+
+## 2. 解決的關鍵 Bug
+
+1. **Delete Session Crash**：修正了刪除對話時後端回傳 204 No Content 導致前端 `response.json()` 解析失敗的錯誤。
+2. **Chart Blank Issue**：修復了柱狀圖與折線圖在某些數據格式下無法載入的問題。
+3. **Scroll Truncation**：解決了對話內容過長時頁面被撐開且無法滑動回到上方的問題。
+
+---
+
+## 3. 系統目前的架構架構
+- **前端**：React + TypeScript + Tailwind CSS + ECharts
+- **後端**：FastAPI + SQLite + LangChain
+- **數據存儲**：`backend/data/app.db` (SQLite)
+- **配置存儲**：`backend/data/llm_settings.json`
+
+---
+
+## 4. 未來建議與擴充方向 (Next Steps)
+- **數據寫入權限**：目前 AI 僅能讀取數據，可視需求開發 `INSERT` 功能。
+- **對話刪除確認**：為刪除對話按鈕增加二次確認視窗，避免誤刪。
+- **模型回應優化**：針對特定業務場景進一步微調 System Prompt。
+
+---
+
+> [!NOTE]
+> 本次對話結束時，系統已達到 V1 版穩定狀態，並已準備好同步至 GitHub。

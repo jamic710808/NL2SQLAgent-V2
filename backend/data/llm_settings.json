@@ -1,0 +1,6 @@
+{
+  "provider": "Minimax",
+  "base_url": "https://api.nengpa.com/v1",
+  "api_key": "sk-cp-b6de4e9c231af31d8bf027e28c1afa09d656793c075e358beedc199c5026c699",
+  "model_name": "MiniMax-M2.7"
+}
