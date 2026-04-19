@@ -44,7 +44,7 @@ function App() {
   useEffect(() => {
     const checkBackend = async () => {
       try {
-        const response = await fetch('http://localhost:8000/health')
+        const response = await fetch('http://localhost:8001/health')
         if (response.ok) {
           setBackendStatus('connected')
         } else {

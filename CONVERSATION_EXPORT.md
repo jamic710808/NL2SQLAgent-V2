@@ -51,3 +51,47 @@
 
 > [!NOTE]
 > 本次對話結束時，系統已達到 V1 版穩定狀態，並已準備好同步至 GitHub。
+
+
+1. 資料存放在哪裡？
+資料是存放在 「後端（Backend）」。
+
+具體的存放路徑位在： c:\NL2SQLAgent\backend\data\app.db
+
+資料格式：這是一個 SQLite 資料庫檔案（.db）。
+存放內容：
+分析數據：包含 sales（銷售數據）和 employees（員工數據）等業務表格。
+對話紀錄：包含 chat_sessions（對話會話）和 chat_messages（對話訊息內容）。
+優點：SQL Agent 會讀取這個資料庫的結構，並根據您的問題生成 SQL 語言來查詢這些資料。
+2. 如何擴充或更新資料？
+如果您想要增加數據量或更新現有的內容，您可以透過以下幾種方式：
+
+方法 A：修改初始化程式碼（推薦用於開發環境）
+如果您希望在每次重設系統時都有這些新資料，可以修改後端的初始化腳本：
+
+開啟檔案：
+
+…\backend\app\db\connection.py
+找到 
+
+init_sample_database
+ 函式。
+在 sales_data 或 employees_data 的清單中加入您的新數據。
+生效方式：刪除 
+
+backend/data/app.db
+ 檔案，然後重啟後端服務。系統會自動偵測檔案不存在並根據新程式碼重新建立資料庫。
+方法 B：使用外部資料庫工具（推薦用於手動管理）
+您可以像使用 Excel 一樣管理資料庫：
+
+下載並安裝 「DB Browser for SQLite」（免費工具）。
+使用該工具開啟 c:\NL2SQLAgent\backend\data\app.db。
+您可以像編輯表格一樣直接新增、刪除或修改資料列。
+修改完成後點擊「Write Changes」，網頁前端就會立即查詢到更新後的結果。
+方法 C：透過 AI 擴充（進階功能）
+目前的 Agent 被設定為「唯讀」以保護安全。如果您未來需要透過對話來「新增」數據，我們可以修改後端的 System Prompt，賦予 AI 執行 INSERT 或 UPDATE 指令的權限。
+
+接下來，我將繼續幫您執行「同步到 GitHub」的任務。 您是否希望將 
+
+backend/data/app.db
+ 這個資料庫檔案也一併上傳到 GitHub，還是只上傳程式碼？（通常建議不安裝資料庫檔案，讓每個人在本地端自動生成）。
