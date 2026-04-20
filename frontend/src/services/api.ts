@@ -2,7 +2,7 @@
  * API 服務層 - 封裝所有後端介面調用
  */
 
-const API_BASE = 'http://localhost:8001/api'
+const API_BASE = '/api'
 
 // 通用请求封装
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
