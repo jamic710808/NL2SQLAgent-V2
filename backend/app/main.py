@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.api import chat, session, database, settings as api_settings
-from app.db.connection import get_sql_database, ensure_data_dir
+from app.db.connection import get_sql_database
 
 settings = get_settings()
 
@@ -16,8 +16,7 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
-    # 启动时：确保数据目录存在，初始化数据库
-    ensure_data_dir()
+    # 启动时：初始化数据库
     get_sql_database()  # 触发数据库初始化
     print("Application started, database initialized.")
     
