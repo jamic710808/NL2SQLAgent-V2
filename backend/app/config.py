@@ -39,5 +39,13 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    """获取配置单例"""
-    return Settings()
+    """获取配置单例并自动适配 Vercel Postgres"""
+    settings = Settings()
+    # 如果环境中有 Vercel Postgres 的默认 URL，自动覆盖
+    vercel_pg_url = os.getenv("POSTGRES_URL")
+    if vercel_pg_url:
+        # Vercel URL 通常是 postgres:// 开头，SQLAlchemy 需要 postgresql:// 开头
+        if vercel_pg_url.startswith("postgres://"):
+            vercel_pg_url = vercel_pg_url.replace("postgres://", "postgresql://", 1)
+        settings.database_url = vercel_pg_url
+    return settings

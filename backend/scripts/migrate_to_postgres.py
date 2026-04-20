@@ -4,7 +4,7 @@
 import os
 import sys
 from sqlalchemy import create_engine, MetaData
-from dotenv import load_load
+from dotenv import load_dotenv
 
 # 將上層目錄加入 sys.path 以匯入 app 模組
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -58,14 +58,26 @@ def migrate_data(source_url: str, target_url: str):
     print("\n遷移完成！")
 
 if __name__ == "__main__":
-    # 預設來源為本地 SQLite
-    source_db = "sqlite:///../data/app.db"
+    # 預設來源為本地 SQLite (請確保在 backend 目錄下執行)
+    source_db = "sqlite:///./data/app.db"
     
     print("=== SQLite 至 PostgreSQL 遷移工具 ===")
-    target_db = input("請輸入您的 PostgreSQL 連線字串 (例如 postgresql://user:pass@host/dbname): ").strip()
+    
+    env_url = os.getenv("POSTGRES_URL")
+    if env_url:
+        print("💡 偵測到環境變數 POSTGRES_URL，將優先使用。")
+        if env_url.startswith("postgres://"):
+            env_url = env_url.replace("postgres://", "postgresql://", 1)
+        target_db = env_url
+    else:
+        target_db = input("請輸入您的 PostgreSQL 連線字串 (例如 postgresql://user:pass@host/dbname): ").strip()
     
     if not target_db:
         print("錯誤: 必須提供目標資料庫連線字串。")
         sys.exit(1)
+        
+    # 同樣的處理，確保使用者貼的如果是 postgres:// 也能過
+    if target_db.startswith("postgres://"):
+        target_db = target_db.replace("postgres://", "postgresql://", 1)
         
     migrate_data(source_db, target_db)
