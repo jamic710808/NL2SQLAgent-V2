@@ -54,19 +54,3 @@ app.include_router(api_settings.router, prefix="/api")
 async def health_check():
     """健康检查接口"""
     return {"status": "ok", "message": "Service is running"}
-
-
-@app.get("/")
-async def root():
-    """根路径"""
-    return {
-        "app": settings.app_name,
-        "version": "1.0.0",
-        "docs": "/docs",
-        "api_endpoints": {
-            "sessions": "/api/sessions",
-            "chat": "/api/chat",
-            "database": "/api/database/schema",
-            "settings": "/api/settings/llm",
-        }
-    }
