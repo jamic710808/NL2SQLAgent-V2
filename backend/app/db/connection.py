@@ -52,6 +52,13 @@ chat_messages_table = Table(
     Column('created_at', DateTime, server_default=func.now()),
 )
 
+# 應用設定表（取代本地 JSON 檔案，以支援 Vercel 唯讀檔案系統）
+app_settings_table = Table(
+    'app_settings', metadata,
+    Column('key', String, primary_key=True),
+    Column('value', String, nullable=False),
+)
+
 def get_engine():
     settings = get_settings()
     db_url = settings.database_url
