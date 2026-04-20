@@ -59,10 +59,19 @@ def get_engine():
     if db_url.startswith("sqlite:///"):
         # 從 sqlite:///./data/app.db 提取路徑並確保目錄存在
         db_path = db_url.replace("sqlite:///", "")
+        
+        # 在 Vercel 上遇到 Read-only file system 時，將 SQLite 強制寫入 /tmp
+        if os.environ.get("VERCEL") == "1" and not db_path.startswith("/tmp/"):
+            db_path = "/tmp/app.db"
+            db_url = f"sqlite:///{db_path}"
+            
         data_dir = os.path.dirname(db_path)
         if data_dir:
-            os.makedirs(data_dir, exist_ok=True)
-            
+            try:
+                os.makedirs(data_dir, exist_ok=True)
+            except OSError as e:
+                print(f"Warning: Could not create directory {data_dir}: {e}")
+                
         kwargs = {"connect_args": {"check_same_thread": False}}
     else:
         kwargs = {}
