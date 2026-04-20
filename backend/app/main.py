@@ -1,5 +1,5 @@
 """
-FastAPI 应用入口
+FastAPI 應用入口
 """
 from contextlib import asynccontextmanager
 
@@ -15,26 +15,26 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """应用生命周期管理"""
-    # 启动时：初始化数据库
-    get_sql_database()  # 触发数据库初始化
+    """應用生命週期管理"""
+    # 啟動時：初始化資料庫
+    get_sql_database()
     print("Application started, database initialized.")
     
     yield
     
-    # 关闭时：清理资源
+    # 關閉時：清理資源
     print("Application shutting down.")
 
 
-# 创建 FastAPI 应用
+# 建立 FastAPI 應用
 app = FastAPI(
     title=settings.app_name,
-    description="智能数据分析助理 - 基于 LangChain + Qwen3 的自然语言数据库查询系统",
+    description="智能數據分析助理 - 基於 LangChain + Qwen3 的自然語言資料庫查詢系統",
     version="1.0.0",
     lifespan=lifespan,
 )
 
-# 配置 CORS 中间件
+# 配置 CORS 中間件
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -43,7 +43,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 注册 API 路由
+# 註冊 API 路由
 app.include_router(session.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 app.include_router(database.router, prefix="/api")
@@ -52,5 +52,21 @@ app.include_router(api_settings.router, prefix="/api")
 
 @app.get("/health")
 async def health_check():
-    """健康检查接口"""
+    """健康檢查介面"""
     return {"status": "ok", "message": "Service is running"}
+
+
+@app.get("/")
+async def root():
+    """根路徑 - API 資訊"""
+    return {
+        "app": settings.app_name,
+        "version": "1.0.0",
+        "docs": "/docs",
+        "api_endpoints": {
+            "sessions": "/api/sessions",
+            "chat": "/api/chat",
+            "database": "/api/database/schema",
+            "settings": "/api/settings/llm",
+        }
+    }

@@ -1,7 +1,4 @@
 {
-    "name": "nl2sqlagent-v2-root",
-    "private": true,
-    "scripts": {
-        "build": "cd frontend && npm install && npm run build && cd .. && cp -r frontend/dist/* ."
-    }
+    "name": "nl2sqlagent-v2",
+    "private": true
 }
